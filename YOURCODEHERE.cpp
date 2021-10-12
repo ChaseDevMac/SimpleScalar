@@ -9,6 +9,7 @@
 #include <fstream>
 #include <map>
 #include <math.h>
+#include 
 #include <fcntl.h>
 #include <vector>
 #include <iterator>
@@ -39,6 +40,7 @@ bool isDSEComplete = false;
  * 
  * Returns a string similar to "1 1 1"
  */
+
 std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	string latencySettings;
@@ -79,10 +81,15 @@ int validateConfiguration(std::string configuration) {
  * explore all possible options for this dimension and then go to the next
  * dimension until the rightmost dimension.
  */
+
 std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		std::string bestEXECconfiguration, std::string bestEDPconfiguration,
 		int optimizeforEXEC, int optimizeforEDP) {
 
+        // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
+        // FPU: Then go to index 11 
+        // Core: index 0 (1st parameter) to 1 (2nd argument) 
+        // Branch: index 12 (13rd arugment) to index 14 (15th argument)
 	//
 	// Some interesting variables in 431project.h include:
 	//
@@ -161,4 +168,3 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	}
 	return nextconfiguration;
 }
-
