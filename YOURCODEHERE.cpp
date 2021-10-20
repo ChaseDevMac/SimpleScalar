@@ -42,7 +42,7 @@ bool isDSEComplete = false;
 
 std::string generateCacheLatencyParams(string halfBackedConfig) {
 
-	string latencySettings;
+	std::stringstream latencySettings;
 
     int dl1 = getdl1size(halfBackedConfig);
     int il1 = getil1size(halfBackedConfig);
@@ -60,9 +60,9 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
     il1lat += log2(il1assoc);
     ul2lat += log2(ul2assoc);
 
-    latencySettings = dl1lat << " " << il1lat << " " << ul2lat;
+    latencySettings << dl1lat << " " << il1lat << " " << ul2lat;
 
-	return latencySettings;
+	return latencySettings.str();
 }
 
 /*
