@@ -52,35 +52,15 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
     int il1lat = log2(il1);
     int ul2lat = log2(ul2);
 
-	unsigned int dl1assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
-	unsigned int il1assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
+    unsigned int dl1assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
+    unsigned int il1assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
     unsigned int ul2assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
+    dl1lat += log2(dl1assoc);
+    il1lat += log2(il1assoc);
+    ul2lat += log2(ul2assoc);
 
-    if(il1assoc == 2)
-      il1lat += 1;
-    else if (il1assoc == 4)
-      il1lat += 2;
-    else
-      il1lat += 3;
-
-    if(dl1assoc == 2)
-      dl1lat += 1;
-    else if (dl1assoc == 4)
-      dl1lat += 2;
-    else
-      dl1lat += 3;
-
-    if(ul2assoc == 2)
-      ul2lat += 1;
-    else if (ul2assoc == 4)
-      ul2lat += 2;
-    else if (ul2assoc == 8)
-      ul2lat += 3;
-    else
-      ul2lat += 4;
-
-    latencySettings = dl1lat + std::string(" ") + il1lat + std::string(" ") + ul2lat;
+    latencySettings = dl1lat << " " << il1lat << " " << ul2lat;
 
 	return latencySettings;
 }
