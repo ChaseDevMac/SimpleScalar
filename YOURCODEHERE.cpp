@@ -44,43 +44,43 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	string latencySettings;
 
-        int dl1 = getdl1size(halfBackedConfig);
-        int il1 = getil1size(halfBackedConfig);
-        int ul2 = getul2size(halfBackedConfig);
+    int dl1 = getdl1size(halfBackedConfig);
+    int il1 = getil1size(halfBackedConfig);
+    int ul2 = getl2size(halfBackedConfig);
 
-        int dl1lat = log2(dl1);
-        int il1lat = log2(il1);
-        int ul2lat = log2(ul2);
+    int dl1lat = log2(dl1);
+    int il1lat = log2(il1);
+    int ul2lat = log2(ul2);
 
 	unsigned int dl1assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
 	unsigned int il1assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
-        unsigned int ul2assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
+    unsigned int ul2assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
 
-        if(il1assoc == 2)
-          il1lat += 1;
-        else if (il1assoc == 4)
-          il1at += 2;
-        else
-          il1at += 3;
+    if(il1assoc == 2)
+      il1lat += 1;
+    else if (il1assoc == 4)
+      il1lat += 2;
+    else
+      il1lat += 3;
 
-        if(dl1assoc == 2)
-          dl1lat += 1;
-        else if (dl1assoc == 4)
-          dl1lat += 2;
-        else
-          dl1lat += 3;
+    if(dl1assoc == 2)
+      dl1lat += 1;
+    else if (dl1assoc == 4)
+      dl1lat += 2;
+    else
+      dl1lat += 3;
 
-        if(ul2assoc == 2)
-          ul2lat += 1;
-        else if (ul2assoc == 4)
-          ul2lat += 2;
-        else if (ul2assoc == 8)
-          ul2lat += 3;
-        else
-          ul2lat += 4;
+    if(ul2assoc == 2)
+      ul2lat += 1;
+    else if (ul2assoc == 4)
+      ul2lat += 2;
+    else if (ul2assoc == 8)
+      ul2lat += 3;
+    else
+      ul2lat += 4;
 
-        latencySettings = dl1lat + std::string(" ") + il1lat + std::string(" ") + ul2lat;
+    latencySettings = dl1lat + std::string(" ") + il1lat + std::string(" ") + ul2lat;
 
 	return latencySettings;
 }
@@ -94,22 +94,22 @@ int validateConfiguration(std::string configuration) {
 	unsigned int il1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
 	unsigned int ul2blocksize = 16 << extractConfigPararm(configuration, 8);
 
-        unsigned int dl1 = getdl1size(halfBackedConfig);
-        unsigned int il1 = getil1size(halfBackedConfig);
-        unsigned int ul2 = getul2size(halfBackedConfig);
+    unsigned int dl1 = getdl1size(configuration);
+    unsigned int il1 = getil1size(configuration);
+    unsigned int ul2 = getl2size(configuration);
 
-        int ifq = 8;
+    int ifq = 8;
 
-        if ((il1blocksize < ifq) || (il1blocksize != dl1blocksize))
-          return 0;
-        if ((ul2blocksize < (2 * il1blocksize)) || (ul2blocksize > 128))
-          return 0;
-        if ((il1 < 2) || (il1 > 64))
-          return 0;
-        if ((dl1 < 2) || (dl1 > 64))
-          return 0;
-        if ((ul2 < 32) || (ul2b > 1028))
-          return 0;
+    if ((il1blocksize < ifq) || (il1blocksize != dl1blocksize))
+       return 0;
+    if ((ul2blocksize < (2 * il1blocksize)) || (ul2blocksize > 128))
+       return 0;
+    if ((il1 < 2) || (il1 > 64))
+        return 0;
+    if ((dl1 < 2) || (dl1 > 64))
+        return 0;
+    if ((ul2 < 32) || (ul2 > 1028))
+        return 0;
 
 
 	// The below is a necessary, but insufficient condition for validating a
