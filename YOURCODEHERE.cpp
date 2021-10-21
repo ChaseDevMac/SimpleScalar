@@ -90,11 +90,11 @@ int validateConfiguration(std::string configuration) {
     	return 0;
     if ((ul2BlockSize < (2 * il1BlockSize)) || (ul2BlockSize > 128))
     	return 0;
-    if ((il1Size < 2) || (il1Size > 64))
+    if ((il1Size < 2*KILOBYTE) || (il1Size > 64*KILOBYTE))
     	return 0;
-    if ((dl1Size < 2) || (dl1Size > 64))
+    if ((dl1Size < 2*KILOBYTE) || (dl1Size > 64*KILOBYTE))
         return 0;
-    if ((ul2Size < 32) || (ul2Size > 1028))
+    if ((ul2Size < 32*KILOBYTE) || (ul2Size > 1028*KILOBYTE))
         return 0;
 
 	// The below is a necessary, but insufficient condition for validating a
