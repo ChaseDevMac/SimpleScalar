@@ -42,27 +42,33 @@ bool isDSEComplete = false;
 
 std::string generateCacheLatencyParams(string halfBackedConfig) {
 
-	std::stringstream latencySettings;
+    std::stringstream latencySettings;
 
+    // The (OVERALL) sizes of L1 instruction & data caches and unified cache
     int dl1 = getdl1size(halfBackedConfig);
     int il1 = getil1size(halfBackedConfig);
     int ul2 = getl2size(halfBackedConfig);
 
-    int dl1lat = log2(dl1);
-    int il1lat = log2(il1);
-    int ul2lat = log2(ul2);
+    // The cache latencies which is the log2 of the cache sizes
+    // The sizes are in terms of KB but need it in terms of bytes (1 KB = 1024 bytes)
+    int dl1lat = log2(dl1/1024);
+    int il1lat = log2(il1/1024);
+    int ul2lat = log2(ul2/1024);
 
+    // get the associations (2-way, 4-way, 8-way) of the caches
     unsigned int dl1assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
     unsigned int il1assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
     unsigned int ul2assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
+    // The associations are a power of 2 so the additional cycles are the log2 of that 
     dl1lat += log2(dl1assoc);
     il1lat += log2(il1assoc);
     ul2lat += log2(ul2assoc);
 
+    // latency settings is in the form "x y z"
     latencySettings << dl1lat << " " << il1lat << " " << ul2lat;
 
-	return latencySettings.str();
+    return latencySettings.str();
 }
 
 /*
@@ -70,31 +76,47 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
  */
 int validateConfiguration(std::string configuration) {
 
-	unsigned int dl1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
-	unsigned int il1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
-	unsigned int ul2blocksize = 16 << extractConfigPararm(configuration, 8);
-
+    // The (OVERALL) sizes of L1 instruction & data caches and unified cache
     unsigned int dl1 = getdl1size(configuration);
     unsigned int il1 = getil1size(configuration);
     unsigned int ul2 = getl2size(configuration);
+    
+    // the BLOCK sizes of L1 instruction & data caches and unified cache
+    unsigned int dl1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
+    unsigned int il1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
+    unsigned int ul2blocksize = 16 << extractConfigPararm(configuration, 8);
 
-    int ifq = 8;
 
+    // instruction fetch queue
+    int ifq = 1 << extractConfigPararm(configuration, 0);
+
+    // Case 1: the L1 instruction cache block size must be at least the instruction fetch queue size 
+    // Also, the L1 data cache should have the same block size as the L1 instruction cache
     if ((il1blocksize < ifq) || (il1blocksize != dl1blocksize))
        return 0;
-    if ((ul2blocksize < (2 * il1blocksize)) || (ul2blocksize > 128))
+
+    // Case 2: unified L2 cache block size must be at least twice the il1 block size 
+    // but a max of 128 bytes
+    // Also ul2 overall size must be at least twice the overall sizes of il1 + dl1
+    if ( (ul2blocksize < (2 * il1blocksize))
+        || (ul2blocksize > 128)
+        || (ul2 < 2 *(il1 + dl1)) )
        return 0;
+
+    // Case 3: il1 and dl1 sizes must be a minimum of 2 KB and maximum of 64 KB
     if ((il1 < 2) || (il1 > 64))
         return 0;
     if ((dl1 < 2) || (dl1 > 64))
         return 0;
+
+    // Case 4: ul2 size must be a minimum of 32 KB and maximum of 1024 KB
     if ((ul2 < 32) || (ul2 > 1028))
         return 0;
 
 
-	// The below is a necessary, but insufficient condition for validating a
-	// configuration.
-	return isNumDimConfiguration(configuration);
+    // The below is a necessary, but insufficient condition for validating a
+    // configuration.
+    return isNumDimConfiguration(configuration);
 }
 
 /*
@@ -112,11 +134,12 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		std::string bestEXECconfiguration, std::string bestEDPconfiguration,
 		int optimizeforEXEC, int optimizeforEDP) {
 
+        // Exploration order:
         // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
         // FPU: Then go to index 11 
         // Core: index 0 (1st parameter) to 1 (2nd argument) 
         // Branch: index 12 (13rd arugment) to index 14 (15th argument)
-	//
+	
 	// Some interesting variables in 431project.h include:
 	//
 	// 1. GLOB_dimensioncardinality
@@ -164,8 +187,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		ss << nextValue << " ";
 
 		// Fill in remaining independent params with 0.
-		for (int dim = (currentlyExploringDim + 1);
-				dim < (NUM_DIMS - NUM_DIMS_DEPENDENT); ++dim) {
+		for (int dim = (currentlyExploringDim + 1); dim < (NUM_DIMS - NUM_DIMS_DEPENDENT); ++dim) {
 			ss << "0 ";
 		}
 
