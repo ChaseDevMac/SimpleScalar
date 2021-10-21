@@ -76,9 +76,9 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
  */
 int validateConfiguration(std::string configuration) {
 
-	unsigned int dl1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
-	unsigned int il1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
-	unsigned int ul2blocksize = 16 << extractConfigPararm(configuration, 8);
+	unsigned int dl1BlockSize = 8 * (1 << extractConfigPararm(configuration, 2));
+	unsigned int il1BlockSize = 8 * (1 << extractConfigPararm(configuration, 2));
+	unsigned int ul2BlockSize = 16 << extractConfigPararm(configuration, 8);
 
     unsigned int dl1Size = getdl1size(configuration);
     unsigned int il1Size = getil1size(configuration);
@@ -86,9 +86,9 @@ int validateConfiguration(std::string configuration) {
 
     int ifq = 8;
 
-    if ((il1blocksize < ifq) || (il1blocksize != dl1blocksize))
+    if ((il1BlockSize < ifq) || (il1BlockSize != dl1BlockSize))
     	return 0;
-    if ((ul2blocksize < (2 * il1blocksize)) || (ul2blocksize > 128))
+    if ((ul2BlockSize < (2 * il1BlockSize)) || (ul2BlockSize > 128))
     	return 0;
     if ((il1Size < 2) || (il1Size > 64))
     	return 0;
