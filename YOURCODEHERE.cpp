@@ -80,21 +80,21 @@ int validateConfiguration(std::string configuration) {
 	unsigned int il1blocksize = 8 * (1 << extractConfigPararm(configuration, 2));
 	unsigned int ul2blocksize = 16 << extractConfigPararm(configuration, 8);
 
-    unsigned int dl1 = getdl1size(configuration);
-    unsigned int il1 = getil1size(configuration);
-    unsigned int ul2 = getl2size(configuration);
+    unsigned int dl1Size = getdl1size(configuration);
+    unsigned int il1Size = getil1size(configuration);
+    unsigned int ul2Size = getl2size(configuration);
 
     int ifq = 8;
 
     if ((il1blocksize < ifq) || (il1blocksize != dl1blocksize))
-       return 0;
+    	return 0;
     if ((ul2blocksize < (2 * il1blocksize)) || (ul2blocksize > 128))
-       return 0;
-    if ((il1 < 2) || (il1 > 64))
+    	return 0;
+    if ((il1Size < 2) || (il1Size > 64))
+    	return 0;
+    if ((dl1Size < 2) || (dl1Size > 64))
         return 0;
-    if ((dl1 < 2) || (dl1 > 64))
-        return 0;
-    if ((ul2 < 32) || (ul2 > 1028))
+    if ((ul2Size < 32) || (ul2Size > 1028))
         return 0;
 
 	// The below is a necessary, but insufficient condition for validating a
@@ -188,16 +188,15 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 
 		// Make sure we start exploring next dimension in next iteration.
 		if (currentDimDone) {
-			dimensionIndex++;
-			cout << "Dimension Index: " << dimensionIndex << endl;
-			currentlyExploringDim = order[dimensionIndex];
+			currentlyExploringDim = order[++dimensionIndex];
 			choiceIndex = 0;
 			currentDimDone = false;
 		}
 
 		// Signal that DSE is complete after this configuration.
-		if (dimensionIndex >= (NUM_DIMS - NUM_DIMS_DEPENDENT))
+		if (dimensionIndex >= (NUM_DIMS - NUM_DIMS_DEPENDENT)) {
 			isDSEComplete = true;
+		}
 	}
 	return nextconfiguration;
 }
