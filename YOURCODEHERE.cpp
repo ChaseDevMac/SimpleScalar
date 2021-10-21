@@ -28,6 +28,8 @@ using namespace std;
  * Feel free to create more global variables to track progress of your
  * heuristic.
  */
+#define KILOBYTE 1024
+
 unsigned int currentlyExploringDim = 0;
 int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
 int dimensionIndex = 0;
@@ -47,23 +49,24 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	std::stringstream latencySettings;
 
-    int dl1 = getdl1size(halfBackedConfig);
-    int il1 = getil1size(halfBackedConfig);
-    int ul2 = getl2size(halfBackedConfig);
+	/* L1 Data Cache Latency */
+    int dl1Size = getdl1size(halfBackedConfig);
+	unsigned int dl1Assoc = extractConfigPararm(halfBackedConfig, 4);
 
-    int dl1lat = log2(dl1);
-    int il1lat = log2(il1);
-    int ul2lat = log2(ul2);
+	/* L1 Instruction Cache Latency */
+    int il1Size = getil1size(halfBackedConfig);
+	unsigned int il1Assoc = extractConfigPararm(halfBackedConfig, 6);
 
-    unsigned int dl1assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
-    unsigned int il1assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
-    unsigned int ul2assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
+	/* L2 Unified Cache Latency */
+    int ul2Size = getl2size(halfBackedConfig);
+	unsigned int ul2Assoc = extractConfigPararm(halfBackedConfig, 9);
 
-    dl1lat += log2(dl1assoc);
-    il1lat += log2(il1assoc);
-    ul2lat += log2(ul2assoc);
+	/* Calculating latencies based on constraints */
+    int dl1Lat = log2(dl1Size / KILOBYTE) + dl1Assoc - 1;
+    int il1Lat = log2(il1Size / KILOBYTE) + il1Assoc - 1;
+    int ul2Lat = log2(ul2Size / (32*KILOBYTE)) + ul2Assoc;
 
-    latencySettings << dl1lat << " " << il1lat << " " << ul2lat << " ";
+    latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
 
 	return latencySettings.str();
 }
@@ -93,7 +96,6 @@ int validateConfiguration(std::string configuration) {
         return 0;
     if ((ul2 < 32) || (ul2 > 1028))
         return 0;
-
 
 	// The below is a necessary, but insufficient condition for validating a
 	// configuration.
@@ -159,10 +161,10 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		// currentlyExploringDim holds the value for the current dimension being explored
 	
 		choiceIndex++;
-		if (choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim]) {
-			// choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
+		if (choiceIndex >= GLOB_dimensioncardinality[currentlyExploringDim]) {
+			choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
 			currentDimDone = true;
-		}
+		} 
 
 		ss << choiceIndex << " ";
 
@@ -188,12 +190,12 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		if (currentDimDone) {
 			dimensionIndex++;
 			currentlyExploringDim = order[dimensionIndex];
-			currentDimDone = false;
 			choiceIndex = 0;
+			currentDimDone = false;
 		}
 
 		// Signal that DSE is complete after this configuration.
-		if (currentlyExploringDim == (NUM_DIMS - NUM_DIMS_DEPENDENT))
+		if (dimensionIndex >= (NUM_DIMS - NUM_DIMS_DEPENDENT))
 			isDSEComplete = true;
 	}
 	return nextconfiguration;
