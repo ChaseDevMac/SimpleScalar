@@ -30,7 +30,8 @@ using namespace std;
  */
 unsigned int currentlyExploringDim = 0;
 int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
-int configIndex = 0;
+int dimensionIndex = 0;
+int choiceIndex = 0;
 bool currentDimDone = false;
 bool isDSEComplete = false;
 
@@ -153,22 +154,21 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 			ss << extractConfigPararm(bestConfig, dim) << " ";
 		}
 
-		// Handling for currently exploring dimension. This is a very dumb
-		// implementation.
-		int nextValue = extractConfigPararm(nextconfiguration,
-				currentlyExploringDim) + 1;
-
-		if (nextValue >= GLOB_dimensioncardinality[currentlyExploringDim]) {
-			nextValue = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
+		// choiceIndex holds the index for the value in the array for the current dimension
+		// dimensionIndex holds the index of the current dimension in the order
+		// currentlyExploringDim holds the value for the current dimension being explored
+	
+		choiceIndex++;
+		if (choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim]) {
+			// choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
 			currentDimDone = true;
 		}
 
-		ss << nextValue << " ";
+		ss << choiceIndex << " ";
 
 		// Fill in remaining independent params with 0.
-		for (int dim = (currentlyExploringDim + 1);
-				dim < (NUM_DIMS - NUM_DIMS_DEPENDENT); ++dim) {
-			ss << "0 ";
+		for (int dim = (currentlyExploringDim + 1); dim < (NUM_DIMS - NUM_DIMS_DEPENDENT); ++dim) {
+			ss << extractConfigPararm(bestConfig, dim) << " ";
 		}
 
 		//
@@ -186,8 +186,10 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 
 		// Make sure we start exploring next dimension in next iteration.
 		if (currentDimDone) {
-			currentlyExploringDim++;
+			dimensionIndex++;
+			currentlyExploringDim = order[dimensionIndex];
 			currentDimDone = false;
+			choiceIndex = 0;
 		}
 
 		// Signal that DSE is complete after this configuration.
