@@ -29,6 +29,8 @@ using namespace std;
  * heuristic.
  */
 unsigned int currentlyExploringDim = 0;
+int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
+int configIndex = 0;
 bool currentDimDone = false;
 bool isDSEComplete = false;
 
@@ -60,7 +62,7 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
     il1lat += log2(il1assoc);
     ul2lat += log2(ul2assoc);
 
-    latencySettings << dl1lat << " " << il1lat << " " << ul2lat;
+    latencySettings << dl1lat << " " << il1lat << " " << ul2lat << " ";
 
 	return latencySettings.str();
 }
