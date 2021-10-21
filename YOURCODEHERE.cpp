@@ -30,12 +30,13 @@ using namespace std;
  */
 #define KILOBYTE 1024
 
-unsigned int currentlyExploringDim = 0;
+
 int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
 int dimensionIndex = 0;
 int choiceIndex = 0;
 bool currentDimDone = false;
 bool isDSEComplete = false;
+unsigned int currentlyExploringDim = order[dimensionIndex];
 
 /*
  * Given a half-baked configuration containing cache properties, generate
