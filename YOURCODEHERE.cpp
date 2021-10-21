@@ -120,7 +120,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
         // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
         // FPU: Then go to index 11 
         // Core: index 0 (1st parameter) to 1 (2nd argument) 
-        // Branch: index 12 (13rd arugment) to index 14 (15th argument)
+        // Branch: index 12 (13rd argument) to index 14 (15th argument)
 	//
 	// Some interesting variables in 431project.h include:
 	//
@@ -159,14 +159,14 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		// choiceIndex holds the index for the value in the array for the current dimension
 		// dimensionIndex holds the index of the current dimension in the order
 		// currentlyExploringDim holds the value for the current dimension being explored
-	
-		choiceIndex++;
+		
 		if (choiceIndex >= GLOB_dimensioncardinality[currentlyExploringDim]) {
 			choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
 			currentDimDone = true;
 		} 
 
 		ss << choiceIndex << " ";
+		choiceIndex++;
 
 		// Fill in remaining independent params with 0.
 		for (int dim = (currentlyExploringDim + 1); dim < (NUM_DIMS - NUM_DIMS_DEPENDENT); ++dim) {
@@ -189,6 +189,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		// Make sure we start exploring next dimension in next iteration.
 		if (currentDimDone) {
 			dimensionIndex++;
+			cout << "Dimension Index: " << dimensionIndex << endl;
 			currentlyExploringDim = order[dimensionIndex];
 			choiceIndex = 0;
 			currentDimDone = false;
