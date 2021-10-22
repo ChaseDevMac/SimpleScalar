@@ -98,9 +98,9 @@ int validateConfiguration(std::string configuration) {
     // Case 2: unified L2 cache block size must be at least twice the il1 block size 
     // but a max of 128 bytes
     // Also ul2 overall size must be at least twice the overall sizes of il1 + dl1
-    if ((ul2BlockSize < (2 * il1BlockSize)) 
+    if ( ((ul2BlockSize < (2 * il1BlockSize)) 
         || (ul2BlockSize > 128))
-        || (ul2 < 2 *(il1 + dl1)) )
+        || (ul2Size < 2 *(il1Size + dl1Size)) )
     	return 0;
 
     // Case 3: il1 and dl1 sizes must be a minimum of 2 KB and maximum of 64 KB
