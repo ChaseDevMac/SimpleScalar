@@ -146,16 +146,15 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	// 4. NUM_DIMS_DEPENDENT
 	// 5. GLOB_seen_configurations
 
-        cout << "choiceIndex piror to while loop: " << choiceIndex;
-        cout << "\nnextconfiguration prior to while loop: " << currentconfiguration;
+        cout << "choiceIndex piror to while loop: " << choiceIndex << "\n";
+        cout << "nextconfiguration prior to while loop: " << currentconfiguration << "\n";
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) ||
 		GLOB_seen_configurations[nextconfiguration]) {
 
-                cout << "\nchoiceIndex in while loop: " << choiceIndex;
-                cout << "\nnextconfiguration in while loop: " << nextconfiguration;
-                printf("currentIndex: %s", nextconfiguration);
+                cout << "choiceIndex in while loop: " << choiceIndex << "\n";
+                cout << "nextconfiguration in while loop: " << nextconfiguration << "\n";
 		// Check if DSE has been completed before and return current
 		// configuration.
 		if(isDSEComplete) {
