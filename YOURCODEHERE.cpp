@@ -92,7 +92,6 @@ int validateConfiguration(std::string configuration) {
     // Case 1: the L1 instruction cache block size must be at least the instruction fetch queue size 
     // Also, the L1 data cache should have the same block size as the L1 instruction cache
     if ((il1BlockSize < ifq) || (il1BlockSize != dl1BlockSize))
-        cout << "INVALID";
     	return 0;
     
     // Case 2: unified L2 cache block size must be at least twice the il1 block size 
@@ -101,20 +100,16 @@ int validateConfiguration(std::string configuration) {
     if ( ((ul2BlockSize < (2 * il1BlockSize)) 
         || (ul2BlockSize > 128))
         || (ul2Size < 2 *(il1Size + dl1Size)) )
-        cout << "INVALID";
     	return 0;
 
     // Case 3: il1 and dl1 sizes must be a minimum of 2 KB and maximum of 64 KB
     if ((il1Size < 2*KILOBYTE) || (il1Size > 64*KILOBYTE))
-        cout << "INVALID";
     	return 0;
     if ((dl1Size < 2*KILOBYTE) || (dl1Size > 64*KILOBYTE))
-        cout << "INVALID";
         return 0;
 
     // Case 4: ul2 size must be a minimum of 32 KB and maximum of 1024 KB
     if ((ul2Size < 32*KILOBYTE) || (ul2Size > 1028*KILOBYTE))
-        cout << "INVALID";
         return 0;
 
     // The below is a necessary, but insufficient condition for validating a
@@ -151,6 +146,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	// 4. NUM_DIMS_DEPENDENT
 	// 5. GLOB_seen_configurations
 
+        cout << "__________________________________________\n";
         cout << "PRIOR TO WHILE LOOP: \n";
         cout << "choiceIndex: " << choiceIndex << "\n";
         cout << "nextconfiguration: " << currentconfiguration << "\n";
@@ -158,7 +154,6 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
         cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
         cout << "__________________________________________\n";
         cout << "\n\n";
-        cout << "__________________________________________\n";
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) ||
@@ -168,6 +163,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
                 cout << "nextconfiguration: " << currentconfiguration << "\n";
                 cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
                 cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
+        	cout << "\n";
 		// Check if DSE has been completed before and return current
 		// configuration.
 		if(isDSEComplete) {
