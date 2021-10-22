@@ -22,8 +22,7 @@ using namespace std;
  */
 #define PSU_ID_SUM (929254193 + 940701210)
 
-/*
- * Some global variables to track heuristic progress.
+/* Some global variables to track heuristic progress.
  * 
  * Feel free to create more global variables to track progress of your
  * heuristic.
@@ -147,12 +146,15 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	// 4. NUM_DIMS_DEPENDENT
 	// 5. GLOB_seen_configurations
 
-        printf("choiceIndex prior to while loop: %d", choiceIndex);
+        cout << "choiceIndex piror to while loop: " << choiceIndex;
+        cout << "\nnextconfiguration prior to while loop: " << currentconfiguration;
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) ||
 		GLOB_seen_configurations[nextconfiguration]) {
 
+                cout << "\nchoiceIndex in while loop: " << choiceIndex;
+                cout << "\nnextconfiguration in while loop: " << nextconfiguration;
                 printf("currentIndex: %s", nextconfiguration);
 		// Check if DSE has been completed before and return current
 		// configuration.
