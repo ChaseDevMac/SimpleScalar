@@ -152,19 +152,18 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	// 5. GLOB_seen_configurations
 
         cout << "PRIOR TO WHILE LOOP: \n";
-        cout << "__________________________________________\n";
         cout << "choiceIndex: " << choiceIndex << "\n";
         cout << "nextconfiguration: " << currentconfiguration << "\n";
         cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
         cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
+        cout << "__________________________________________\n";
         cout << "\n\n";
+        cout << "__________________________________________\n";
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) ||
 		GLOB_seen_configurations[nextconfiguration]) {
 
-                cout << "IN WHILE LOOP: \n";
-                cout << "__________________________________________\n";
                 cout << "choiceIndex: " << choiceIndex << "\n";
                 cout << "nextconfiguration: " << currentconfiguration << "\n";
                 cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
