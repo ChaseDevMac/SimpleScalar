@@ -148,6 +148,8 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 
         cout << "choiceIndex piror to while loop: " << choiceIndex << "\n";
         cout << "nextconfiguration prior to while loop: " << currentconfiguration << "\n";
+        cout << "current Dimension prior to while loop: " << currentlyExploringDim << "\n";
+        cout << "current Dimension name prior to while loop: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) ||
@@ -155,6 +157,8 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 
                 cout << "choiceIndex in while loop: " << choiceIndex << "\n";
                 cout << "nextconfiguration in while loop: " << nextconfiguration << "\n";
+                cout << "current Dimension in while loop: " << currentlyExploringDim << "\n";
+                cout << "current Dimension name in while loop: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
 		// Check if DSE has been completed before and return current
 		// configuration.
 		if(isDSEComplete) {
