@@ -55,11 +55,11 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	/* L1 Instruction Cache Latency */
     int il1Size = getil1size(halfBackedConfig);
-    unsigned int il1Assoc = 1 << extractConfigPararm(configuration, 6);
+    unsigned int il1Assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
 
 	/* L2 Unified Cache Latency */
     int ul2Size = getl2size(halfBackedConfig);
-    unsigned int ul2Assoc = 1 << extractConfigPararm(configuration, 9);
+    unsigned int ul2Assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
 	/* Calculating latencies based on constraints */
     int dl1Lat = log2(dl1Size / KILOBYTE) + log2(dl1Assoc);
