@@ -190,7 +190,6 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		// currentlyExploringDim holds the value for the current dimension being explored
 		
 		if (choiceIndex >= GLOB_dimensioncardinality[currentlyExploringDim]) {
-			choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
 			currentDimDone = true;
 		} 
 
