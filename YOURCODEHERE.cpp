@@ -51,20 +51,20 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	/* L1 Data Cache Latency */
     int dl1Size = getdl1size(halfBackedConfig);
-	unsigned int dl1Assoc = extractConfigPararm(halfBackedConfig, 4);
+    unsigned int dl1Assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
 
 	/* L1 Instruction Cache Latency */
     int il1Size = getil1size(halfBackedConfig);
-	unsigned int il1Assoc = extractConfigPararm(halfBackedConfig, 6);
+    unsigned int il1Assoc = 1 << extractConfigPararm(configuration, 6);
 
 	/* L2 Unified Cache Latency */
     int ul2Size = getl2size(halfBackedConfig);
-	unsigned int ul2Assoc = extractConfigPararm(halfBackedConfig, 9);
+    unsigned int ul2Assoc = 1 << extractConfigPararm(configuration, 9);
 
 	/* Calculating latencies based on constraints */
-    int dl1Lat = log2(dl1Size / KILOBYTE) + dl1Assoc - 1;
-    int il1Lat = log2(il1Size / KILOBYTE) + il1Assoc - 1;
-    int ul2Lat = log2(ul2Size / (32*KILOBYTE)) + ul2Assoc;
+    int dl1Lat = log2(dl1Size / KILOBYTE) + log2(dl1Assoc);
+    int il1Lat = log2(il1Size / KILOBYTE) + log2(il1Assoc);
+    int ul2Lat = log2(ul2Size / KILOBYTE) + log2(ul2Assoc);
 
     latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
 
