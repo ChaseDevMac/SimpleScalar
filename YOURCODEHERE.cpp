@@ -51,43 +51,63 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
     std::stringstream latencySettings;
 
-	/* L1 Data Cache Latency */
+	// L1 Data Cache Size and Associativity 
     int dl1Size = getdl1size(halfBackedConfig);
     unsigned int dl1Assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
 
-	/* L1 Instruction Cache Latency */
+	// L1 Instruction Cache Size and Associativity 
     int il1Size = getil1size(halfBackedConfig);
     unsigned int il1Assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
 
-	/* L2 Unified Cache Latency */
+	// L2 Unified Cache Size and Associativity 
     int ul2Size = getl2size(halfBackedConfig);
     unsigned int ul2Assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
-	/* Calculating latencies based on constraints */
-
-    int dl1Lat = log2(dl1Size / KILOBYTE) + log2(dl1Assoc);
-    int il1Lat = log2(il1Size / KILOBYTE) + log2(il1Assoc);
-    int ul2Lat = log2(ul2Size / KILOBYTE) + log2(ul2Assoc);
-
+	// Calculating latencies (without considering associativity)
+    int dl1Lat = log2(dl1Size / KILOBYTE);
+    int il1Lat = log2(il1Size / KILOBYTE);
+    int ul2Lat = log2(ul2Size / KILOBYTE);
+	
 	/* DEBUG
     cout << "__________________________________________\n";
-	cout << "ul2Size: " << ul2Size << "\n";
-	cout << "ul2Assoc: " << ul2Assoc << "\n";
-	cout << "ul2Lat: " << ul2Lat<< "\n\n";
+	cout << "dl1Size (KB): " << dl1Size / KILOBYTE << "\n";
+	cout << "dl1Assoc: " << dl1Assoc << "\n";
+	cout << "dl1Lat (initial): " << dl1Lat<< "\n\n";
 
     cout << "__________________________________________\n";
-	cout << "ul2Size: " << ul2Size << "\n";
-	cout << "ul2Assoc: " << ul2Assoc << "\n";
-	cout << "ul2Lat: " << ul2Lat<< "\n\n";
+	cout << "il1Size (KB): " << il1Size / KILOBYTE << "\n";
+	cout << "il1Assoc: " << il1Assoc << "\n";
+	cout << "il1Lat (initial): " << il1Lat<< "\n\n";
 
-	
     cout << "__________________________________________\n";
-	cout << "ul2Size: " << ul2Size << "\n";
+	cout << "ul2Size (KB): " << ul2Size / KILOBYTE << "\n";
 	cout << "ul2Assoc: " << ul2Assoc << "\n";
-	cout << "ul2Lat: " << ul2Lat<< "\n\n";
-	*/ 
+	cout << "ul2Lat (initial): " << ul2Lat<< "\n\n";
+	*/
 
-    latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
+	// Adding additional latency cycles due to associativity
+	dl1Lat += log2(dl1Assoc);
+	il1Lat += log2(il1Assoc);
+	ul2Lat += log2(ul2Assoc); 
+	 
+	/* DEBUG
+	cout << "dl1Lat (final): " << dl1Lat << "\n";
+	cout << "il1Lat (final): " << il1Lat << "\n";
+	cout << "ul2Lat (final): " << ul2Lat << "\n\n";
+	*/
+
+	// Conversions of latencies to corresponding indices as defined in runprojectsuite.sh
+	int dl1LatIndex = dl1Lat - 1;
+	int il1LatIndex = il1Lat - 1;
+	int ul2LatIndex = ul2Lat - 5;
+
+	/* DEBUG
+	cout << "dl1LatIndex: " << dl1LatIndex << "\n";
+	cout << "il1LatIndex: " << il1LatIndex << "\n";
+	cout << "ul2LatIndex: " << ul2LatIndex << "\n\n";
+	*/
+
+    latencySettings << dl1LatIndex << " " << il1LatIndex << " " << ul2LatIndex;
 
     return latencySettings.str();
 }
