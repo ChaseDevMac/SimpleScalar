@@ -33,9 +33,11 @@ using namespace std;
 int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
 int dimensionIndex = 0;
 int choiceIndex = 0;
+int traversalIndex = 0;
 bool currentDimDone = false;
 bool isDSEComplete = false;
 unsigned int currentlyExploringDim = order[dimensionIndex];
+std::string bestTraversalConfig = "";
 
 /*
  * Given a half-baked configuration containing cache properties, generate
@@ -51,20 +53,20 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	/* L1 Data Cache Latency */
     int dl1Size = getdl1size(halfBackedConfig);
-    unsigned int dl1Assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
+    unsigned int dl1Assoc = extractConfigPararm(halfBackedConfig, 4);
 
 	/* L1 Instruction Cache Latency */
     int il1Size = getil1size(halfBackedConfig);
-    unsigned int il1Assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
+    unsigned int il1Assoc = extractConfigPararm(halfBackedConfig, 6);
 
 	/* L2 Unified Cache Latency */
     int ul2Size = getl2size(halfBackedConfig);
-    unsigned int ul2Assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
+    unsigned int ul2Assoc = extractConfigPararm(halfBackedConfig, 9);
 
 	/* Calculating latencies based on constraints */
-    int dl1Lat = log2(dl1Size / KILOBYTE) + log2(dl1Assoc);
-    int il1Lat = log2(il1Size / KILOBYTE) + log2(il1Assoc);
-    int ul2Lat = log2(ul2Size / KILOBYTE) + log2(ul2Assoc);
+    int dl1Lat = log2(dl1Size / KILOBYTE) + dl1Assoc - 1;
+    int il1Lat = log2(il1Size / KILOBYTE) + il1Assoc - 1;
+    int ul2Lat = log2(ul2Size / (32*KILOBYTE)) + ul2Assoc;
 
     latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
 
@@ -132,11 +134,11 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		std::string bestEXECconfiguration, std::string bestEDPconfiguration,
 		int optimizeforEXEC, int optimizeforEDP) {
 
-        // Exploration order:
-        // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
-        // FPU: Then go to index 11 
-        // Core: index 0 (1st parameter) to 1 (2nd argument) 
-        // Branch: index 12 (13rd arugment) to index 14 (15th argument)
+    // Exploration order:
+    // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
+    // FPU: Then go to index 11 
+    // Core: index 0 (1st parameter) to 1 (2nd argument) 
+    // Branch: index 12 (13rd arugment) to index 14 (15th argument)
 	
 	// Some interesting variables in 431project.h include:
 	//
@@ -146,14 +148,17 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 	// 4. NUM_DIMS_DEPENDENT
 	// 5. GLOB_seen_configurations
 
-        cout << "__________________________________________\n";
-        cout << "PRIOR TO WHILE LOOP: \n";
-        cout << "choiceIndex: " << choiceIndex << "\n";
-        cout << "nextconfiguration: " << currentconfiguration << "\n";
-        cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
-        cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
-        cout << "__________________________________________\n";
-        cout << "\n\n";
+	/*
+    cout << "__________________________________________\n";
+    cout << "PRIOR TO WHILE LOOP: \n";
+    cout << "choiceIndex: " << choiceIndex << "\n";
+    cout << "nextconfiguration: " << currentconfiguration << "\n";
+    cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
+    cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
+    cout << "__________________________________________\n";
+    cout << "\n\n";
+	*/
+
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
 	while (!validateConfiguration(nextconfiguration) || GLOB_seen_configurations[nextconfiguration]) {
@@ -224,9 +229,31 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 			currentDimDone = false;
 		}
 
-		// Signal that DSE is complete after this configuration.
+		// Creating cases to determine if the DSE is done or not
 		if (dimensionIndex >= (NUM_DIMS - NUM_DIMS_DEPENDENT)) {
-			isDSEComplete = true;
+			if (traversalIndex == 0) { // First traversal 
+				bestTraversalConfig = nextconfiguration;
+				traversalIndex++;
+				
+				// Reset global variables
+				dimensionIndex = 0;
+				currentlyExploringDim = order[dimensionIndex];
+				choiceIndex = 0;
+				currentDimDone = false;
+			} else {
+				if (nextconfiguration == bestTraversalConfig) { // The best traversal has been ensured by consecutive runs producing same result
+					isDSEComplete = true;
+				} else {
+					bestTraversalConfig = nextconfiguration;
+
+					// Reset global variables
+					dimensionIndex = 0;
+					currentlyExploringDim = order[dimensionIndex];
+					choiceIndex = 0;
+					currentDimDone = false;
+					traversalIndex++;
+				}
+			}
 		}
 	}
 	return nextconfiguration;
