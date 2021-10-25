@@ -156,14 +156,16 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
         cout << "\n\n";
 	std::string nextconfiguration = currentconfiguration;
 	// Continue if proposed configuration is invalid or has been seen/checked before.
-	while (!validateConfiguration(nextconfiguration) ||
-		GLOB_seen_configurations[nextconfiguration]) {
+	while (!validateConfiguration(nextconfiguration) || GLOB_seen_configurations[nextconfiguration]) {
+		
+		/* Debugging print statements
+        cout << "choiceIndex: " << choiceIndex << "\n";
+        cout << "nextconfiguration: " << currentconfiguration << "\n";
+        cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
+        cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
+        cout << "\n";
+		*/ 
 
-                cout << "choiceIndex: " << choiceIndex << "\n";
-                cout << "nextconfiguration: " << currentconfiguration << "\n";
-                cout << "currentlyExploringDim: " << currentlyExploringDim << "\n";
-                cout << "Dimension name: " << GLOB_dimensionnames[currentlyExploringDim] << "\n";
-        	cout << "\n";
 		// Check if DSE has been completed before and return current
 		// configuration.
 		if(isDSEComplete) {
@@ -190,6 +192,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
 		// currentlyExploringDim holds the value for the current dimension being explored
 		
 		if (choiceIndex >= GLOB_dimensioncardinality[currentlyExploringDim]) {
+			choiceIndex = GLOB_dimensioncardinality[currentlyExploringDim] - 1;
 			currentDimDone = true;
 		} 
 
