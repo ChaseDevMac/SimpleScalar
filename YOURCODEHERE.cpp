@@ -29,7 +29,6 @@ using namespace std;
  */
 #define KILOBYTE 1024
 
-
 int order[15] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 12, 13, 14 };
 int dimensionIndex = 0;
 int choiceIndex = 0;
@@ -177,7 +176,7 @@ std::string generateNextConfigurationProposal(std::string currentconfiguration,
     // Cache: Start at index 2 (3rd argument) and iterate to 10 (11th argument)
     // FPU: Then go to index 11 
     // Core: index 0 (1st parameter) to 1 (2nd argument) 
-    // Branch: index 12 (13rd arugment) to index 14 (15th argument)
+    // Branch: index 12 (13th arugment) to index 14 (15th argument)
 	
 	// Some interesting variables in 431project.h include:
 	//
