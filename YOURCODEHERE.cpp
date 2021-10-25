@@ -73,9 +73,19 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
     cout << "__________________________________________\n";
 	cout << "ul2Size: " << ul2Size << "\n";
 	cout << "ul2Assoc: " << ul2Assoc << "\n";
-	cout << "ul2Lat: " << ul2Lat<< "\n";
-    cout << "\n\n";
-	*/
+	cout << "ul2Lat: " << ul2Lat<< "\n\n";
+
+    cout << "__________________________________________\n";
+	cout << "ul2Size: " << ul2Size << "\n";
+	cout << "ul2Assoc: " << ul2Assoc << "\n";
+	cout << "ul2Lat: " << ul2Lat<< "\n\n";
+
+	
+    cout << "__________________________________________\n";
+	cout << "ul2Size: " << ul2Size << "\n";
+	cout << "ul2Assoc: " << ul2Assoc << "\n";
+	cout << "ul2Lat: " << ul2Lat<< "\n\n";
+	*/ 
 
     latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
 
