@@ -53,20 +53,29 @@ std::string generateCacheLatencyParams(string halfBackedConfig) {
 
 	/* L1 Data Cache Latency */
     int dl1Size = getdl1size(halfBackedConfig);
-    unsigned int dl1Assoc = extractConfigPararm(halfBackedConfig, 4);
+    unsigned int dl1Assoc = 1 << extractConfigPararm(halfBackedConfig, 4);
 
 	/* L1 Instruction Cache Latency */
     int il1Size = getil1size(halfBackedConfig);
-    unsigned int il1Assoc = extractConfigPararm(halfBackedConfig, 6);
+    unsigned int il1Assoc = 1 << extractConfigPararm(halfBackedConfig, 6);
 
 	/* L2 Unified Cache Latency */
     int ul2Size = getl2size(halfBackedConfig);
-    unsigned int ul2Assoc = extractConfigPararm(halfBackedConfig, 9);
+    unsigned int ul2Assoc = 1 << extractConfigPararm(halfBackedConfig, 9);
 
 	/* Calculating latencies based on constraints */
-    int dl1Lat = log2(dl1Size / KILOBYTE) + dl1Assoc - 1;
-    int il1Lat = log2(il1Size / KILOBYTE) + il1Assoc - 1;
-    int ul2Lat = log2(ul2Size / (32*KILOBYTE)) + ul2Assoc;
+
+    int dl1Lat = log2(dl1Size / KILOBYTE) + log2(dl1Assoc);
+    int il1Lat = log2(il1Size / KILOBYTE) + log2(il1Assoc);
+    int ul2Lat = log2(ul2Size / KILOBYTE) + log2(ul2Assoc);
+
+	/* DEBUG
+    cout << "__________________________________________\n";
+	cout << "ul2Size: " << ul2Size << "\n";
+	cout << "ul2Assoc: " << ul2Assoc << "\n";
+	cout << "ul2Lat: " << ul2Lat<< "\n";
+    cout << "\n\n";
+	*/
 
     latencySettings << dl1Lat << " " << il1Lat << " " << ul2Lat;
 
@@ -111,7 +120,7 @@ int validateConfiguration(std::string configuration) {
         return 0;
 
     // Case 4: ul2 size must be a minimum of 32 KB and maximum of 1024 KB
-    if ((ul2Size < 32*KILOBYTE) || (ul2Size > 1028*KILOBYTE))
+    if ((ul2Size < 32*KILOBYTE) || (ul2Size > 1024*KILOBYTE))
         return 0;
 
     // The below is a necessary, but insufficient condition for validating a
